@@ -7,7 +7,7 @@
 ## document.domain + iframe (只有在主域相同的时候才能使用该方法)
 这两个域名必须属于同一个基础域名!而且所用的协议，端口都要一致，否则无法利用document.domain进行跨域
 
-```
+```js
 // http://testA.test.com/pageA
 document.domain = 'test.com';
 var cIframe = document.createElement('iframe');
@@ -27,7 +27,7 @@ document.domain = 'test.com';
 ## window.name 进行跨域
 一个窗口(window)的生命周期内,窗口载入的所有的页面都是共享一个window.name的，每个页面对window.name都有读写的权限，window.name是持久存在一个窗口载入过的所有页面中的，并不会因新页面的载入而进行重置
 
-```
+```js
 (function () {
     window.dataRequest = {
         doc: document,
@@ -81,7 +81,7 @@ dataRequest.send("http://test.com/getdata?windowname=true",function(data){})
 
 ## postMessage 实现
 html5引入的message的API可以更方便、有效、安全的解决这些难题。postMessage()方法允许来自不同源的脚本采用异步方式进行有限的通信，可以实现跨文本档、多窗口、跨域消息传递。postMessage(data,origin)还用来解决： 1.页面和其打开的新窗口的数据传递 2.多窗口之间消息传递 3.页面与嵌套的iframe消息传递 4.上面三个问题的跨域数据传递
-```
+```js
 //  http://test.com/
 <iframe src="http://testiframe.com/getData"></iframe>
 // 
@@ -104,7 +104,7 @@ window.addEventListener('message', function (event) {
 
 ## 动态创建script (JSONP 实现的方式 利用script标签可跨域的特点，在跨域脚本中可以直接回调当前脚本的函数)
 JSONP是指JSON Padding，JSONP是一种非官方跨域数据交换协议，由于script的src属性可以跨域请求，所以JSONP利用的浏览器的这个“漏洞”,实现跨域请求。但因为src只能实现GET请求，限定JOSNP也只能实现GET请求。
-```
+```js
 var JSONP = {
     now: function () {
         return (new Date()).getTime();
@@ -176,17 +176,17 @@ JSONP.getJSON("http://test.com/getdata",function(data){})
 凡是不同时满足上面两个条件，就属于非简单请求。
 1. 简单请求
 对于简单请求，浏览器直接发出CORS请求。具体来说，就是在头信息之中，增加一个Origin字段。
-```
+```js
 Origin: http://api.bob.com
 ```
 这个回应的头信息没有包含Access-Control-Allow-Origin字段,浏览器抛出一个错误，被XMLHttpRequest的onerror回调函数捕获。如果Origin指定的域名在许可范围内，服务器返回的响应，会多出几个头信息字段。
-```
+```js
 Access-Control-Allow-Origin: http://api.bob.com  //该字段是必须的。它的值要么是请求时Origin字段的值，要么是一个*，表示接受任意域名的请求
 Access-Control-Allow-Credentials: true //该字段可选。它的值是一个布尔值，表示是否允许发送Cookie。默认false
 Access-Control-Expose-Headers: FooBar //CORS请求时，XMLHttpRequest对象的getResponseHeader()方法只能拿到6个基本字段：Cache-Control、Content-Language、Content-Type、Expires、Last-Modified、Pragma。如果想拿到其他字段，就必须在Access-Control-Expose-Headers里面指定
 ```
 >发者必须在AJAX请求中打开withCredentials属性
-```
+```js
 var xhr = new XMLHttpRequest();
 xhr.withCredentials = true;
 ```
@@ -194,14 +194,14 @@ xhr.withCredentials = true;
 非简单请求是那种对服务器有特殊要求的请求，比如请求方法是PUT或DELETE，或者Content-Type字段的类型是application/json。
 非简单请求的CORS请求，会在正式通信之前，增加一次HTTP查询请求，称为"预检"请求（preflight）。浏览器先询问服务器，当前网页所在的域名是否在服务器的许可名单之中，以及可以使用哪些HTTP动词和头信息字段。只有得到肯定答复，浏览器才会发出正式的XMLHttpRequest请求，否则就报错
 预请求发送
-```
+```js
 OPTIONS /cors HTTP/1.1 //"预检"请求用的请求方法是OPTIONS
 Origin: http://api.bob.com
 Access-Control-Request-Method: PUT //该字段是必须的，用来列出浏览器的CORS请求会用到哪些HTTP方法，上例是PUT
 Access-Control-Request-Headers: X-Custom-Header //该字段是一个逗号分隔的字符串，指定浏览器CORS请求会额外发送的头信息字段，上例是X-Custom-Header。
 ```
 预请求返回
-```
+```js
 HTTP/1.1 200 OK
 Access-Control-Allow-Origin: http://api.bob.com
 Access-Control-Allow-Methods: GET, POST, PUT //该字段必需，它的值是逗号分隔的一个字符串，表明服务器支持的所有跨域请求的方法。
@@ -213,7 +213,7 @@ Access-Control-Max-Age: 1728000 //该字段可选，用来指定本次预检请�
 
 ## web sockets 从协议上跨过同源策略 
 在js创建了web socket之后，会有一个HTTP请求发送到浏览器以发起连接。取得服务器响应后，建立的连接会使用HTTP升级从HTTP协议交换为web sockt协议。当然这种通信只有在支持web socket协议的服务器上才能正常工作。
-```
+```js
 var socket = new WebSocket('ws://www.test.com'); //http->ws; https->wss
 socket.send('hello WebSocket');
 socket.onmessage = function(event){
