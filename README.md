@@ -17,6 +17,7 @@
 ## 样式
 ### [布局](layout/index.md)
 ### [层叠上下文](stacking-context/index.md)
+### [块级格式化上下文](block-formatting-context/index.md)
 ### [渐变处理](gradient/index.md)
 ### [flexbox布局](flexbox/index.md)
 ### [动画](motions/index.md)
