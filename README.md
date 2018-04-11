@@ -18,6 +18,7 @@
 ### [布局](layout/index.md)
 ### [层叠上下文](stacking-context/index.md)
 ### [渐变处理](gradient/index.md)
+### [flexbox布局](flexbox/index.md)
 ### [动画](motions/index.md)
 ### [移动端适配](mobile-adapt/index.md)
 ### [1像素](1px/index.md)
